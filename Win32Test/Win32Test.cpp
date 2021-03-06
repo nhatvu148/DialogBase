@@ -4,12 +4,15 @@
 #define FILE_MENU_NEW 1
 #define FILE_MENU_OPEN 2
 #define FILE_MENU_EXIT 3
+#define CHANGE_TITLE 4
 
 LRESULT CALLBACK WindowProcedure(HWND, UINT, WPARAM, LPARAM);
 
 void AddMenus(HWND);
+void AddControls(HWND);
 
 HMENU hMenu;
+HWND hEdit;
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 {
@@ -51,10 +54,16 @@ LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		case FILE_MENU_NEW:
 			MessageBeep(MB_ICONINFORMATION);
 			break;
+		case CHANGE_TITLE:
+			wchar_t text[100];
+			GetWindowTextW(hEdit, text, 100);
+			SetWindowTextW(hWnd, text);
+			break;
 		}
 		break;
 	case WM_CREATE:
 		AddMenus(hWnd);
+		AddControls(hWnd);
 		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
@@ -71,7 +80,7 @@ void AddMenus(HWND hWnd)
 	HMENU hFileMenu = CreateMenu();
 	HMENU hSubMenu = CreateMenu();
 
-	AppendMenu(hSubMenu, MF_STRING, NULL, _T("SubMenu Item"));
+	AppendMenu(hSubMenu, MF_STRING, CHANGE_TITLE, _T("Change Title"));
 
 	AppendMenu(hFileMenu, MF_STRING, FILE_MENU_NEW, _T("New"));
 	AppendMenu(hFileMenu, MF_POPUP, (UINT_PTR)hSubMenu, _T("Open SubMenu"));
@@ -83,3 +92,11 @@ void AddMenus(HWND hWnd)
 
 	SetMenu(hWnd, hMenu);
 };
+
+void AddControls(HWND hWnd)
+{
+	CreateWindowW(L"Static", L"Enter Text Here:", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+		200, 100, 100, 50, hWnd, NULL, NULL, NULL);
+	hEdit = CreateWindowW(L"Edit", L"...", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL,
+		200, 152, 100, 50, hWnd, NULL, NULL, NULL);
+}
