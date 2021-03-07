@@ -1,10 +1,12 @@
 #include <windows.h>
 #include <tchar.h>
+#include <stdlib.h>
 
 #define FILE_MENU_NEW 1
 #define FILE_MENU_OPEN 2
 #define FILE_MENU_EXIT 3
-#define CHANGE_TITLE 4
+#define GENERATE_BUTTON 4
+#pragma warning(disable : 4996)
 
 LRESULT CALLBACK WindowProcedure(HWND, UINT, WPARAM, LPARAM);
 
@@ -12,7 +14,7 @@ void AddMenus(HWND);
 void AddControls(HWND);
 
 HMENU hMenu;
-HWND hEdit;
+HWND hName, hAge, hOut;
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 {
@@ -54,11 +56,20 @@ LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		case FILE_MENU_NEW:
 			MessageBeep(MB_ICONINFORMATION);
 			break;
-		case CHANGE_TITLE:
-			wchar_t text[100];
-			GetWindowTextW(hEdit, text, 100);
-			SetWindowTextW(hWnd, text);
+		case GENERATE_BUTTON:
+			char name[30], age[10], out[50];
+			GetWindowText(hName, name, 30);
+			GetWindowText(hAge, age, 10);
+
+			strcpy(out, name);
+			strcat(out, " is ");
+			strcat(out, age);
+			strcat(out, " years old.");
+
+			SetWindowText(hOut, out);
+
 			break;
+
 		}
 		break;
 	case WM_CREATE:
@@ -80,7 +91,7 @@ void AddMenus(HWND hWnd)
 	HMENU hFileMenu = CreateMenu();
 	HMENU hSubMenu = CreateMenu();
 
-	AppendMenu(hSubMenu, MF_STRING, CHANGE_TITLE, _T("Change Title"));
+	AppendMenu(hSubMenu, MF_STRING, NULL, _T("SubMenu Item"));
 
 	AppendMenu(hFileMenu, MF_STRING, FILE_MENU_NEW, _T("New"));
 	AppendMenu(hFileMenu, MF_POPUP, (UINT_PTR)hSubMenu, _T("Open SubMenu"));
@@ -95,8 +106,13 @@ void AddMenus(HWND hWnd)
 
 void AddControls(HWND hWnd)
 {
-	CreateWindowW(L"Static", L"Enter Text Here:", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-		200, 100, 100, 50, hWnd, NULL, NULL, NULL);
-	hEdit = CreateWindowW(L"Edit", L"...", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL,
-		200, 152, 100, 50, hWnd, NULL, NULL, NULL);
+	CreateWindowW(L"Static", L"Name:", WS_VISIBLE | WS_CHILD, 100, 50, 98, 38, hWnd, NULL, NULL, NULL);
+	hName = CreateWindowW(L"Edit", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 200, 50, 98, 38, hWnd, NULL, NULL, NULL);
+
+	CreateWindowW(L"Static", L"Age:", WS_VISIBLE | WS_CHILD, 100, 90, 98, 38, hWnd, NULL, NULL, NULL);
+	hAge = CreateWindowW(L"Edit", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 200, 90, 98, 38, hWnd, NULL, NULL, NULL);
+
+	CreateWindowW(L"Button", L"Generate", WS_VISIBLE | WS_CHILD, 150, 140, 98, 38, hWnd, (HMENU)GENERATE_BUTTON, NULL, NULL);
+
+	hOut = CreateWindowW(L"Edit", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 100, 200, 300, 200, hWnd, NULL, NULL, NULL);
 }
