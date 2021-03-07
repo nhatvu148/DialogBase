@@ -8,6 +8,8 @@
 #define FILE_MENU_EXIT 3
 #define GENERATE_BUTTON 4
 #define OPEN_FILE_BUTTON 5
+#define SAVE_FILE_BUTTON 6
+
 #pragma warning(disable : 4996)
 
 LRESULT CALLBACK WindowProcedure(HWND, UINT, WPARAM, LPARAM);
@@ -42,7 +44,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	hMainWindow = CreateWindowW(L"myWindowClass", L"My Window", WS_OVERLAPPEDWINDOW | WS_VISIBLE, 100, 100, 900, 500, NULL, NULL, NULL, NULL);
 
-	MessageBoxW(NULL, L"Hello World", L"My GUI", MB_OK);
+	// MessageBoxW(NULL, L"Hello World", L"My GUI", MB_OK);
 
 	MSG msg = { 0 };
 	while (GetMessage(&msg, NULL, NULL, NULL))
@@ -52,6 +54,37 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	}
 
 	return 0;
+}
+
+void DisplayFile(char* path)
+{
+	FILE* file;
+	file = fopen(path, "rb");
+	fseek(file, 0, SEEK_END);
+	int _size = ftell(file);
+	rewind(file);
+	char* data = new char[_size + 1];
+	fread(data, _size, 1, file);
+	data[_size] = '\0';
+
+	SetWindowText(hEdit, data);
+
+	fclose(file);
+}
+
+void WriteFile(char* path)
+{
+	FILE* file;
+	file = fopen(path, "w");
+
+	int _size = GetWindowTextLength(hEdit);
+
+	char* data = new char[_size + 1];
+	GetWindowText(hEdit, data, _size);
+
+	fwrite(data, _size + 1, 1, file);
+
+	fclose(file);
 }
 
 void OpenFile(HWND hWnd)
@@ -77,18 +110,27 @@ void OpenFile(HWND hWnd)
 	//MessageBox(NULL, ofn.lpstrFile, "", MB_OK);
 }
 
-void DisplayFile(char* path)
+void SaveFile(HWND hWnd)
 {
-	FILE* file;
-	file = fopen(path, "rb");
-	fseek(file, 0, SEEK_END);
-	int _size = ftell(file);
-	rewind(file);
-	char* data = new char(_size + 1);
-	fread(data, _size, 1, file);
-	data[_size] = '\0';
+	OPENFILENAME ofn;
 
-	SetWindowText(hEdit, data);
+	char file_name[100];
+
+	ZeroMemory(&ofn, sizeof(OPENFILENAME));
+
+	ofn.lStructSize = sizeof(OPENFILENAME);
+	ofn.hwndOwner = hWnd;
+	ofn.lpstrFile = file_name;
+	ofn.lpstrFile[0] = '\0';
+	ofn.nMaxFile = 100;
+	ofn.lpstrFilter = "All files\0*.*\0SourceFiles\0*.CPP\0Text Files\0*.TXT\0";
+	ofn.nFilterIndex = 1;
+
+	GetSaveFileName(&ofn);
+
+	WriteFile(ofn.lpstrFile);
+
+	//MessageBox(NULL, ofn.lpstrFile, "", MB_OK);
 }
 
 
@@ -115,6 +157,9 @@ LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		{
 		case OPEN_FILE_BUTTON:
 			OpenFile(hWnd);
+			break;
+		case SAVE_FILE_BUTTON:
+			SaveFile(hWnd);
 			break;
 		case FILE_MENU_EXIT:
 			// MB_ABORTRETRYIGNORE, MB_CANCELTRYCONTINUE, MB_HELP
@@ -215,7 +260,10 @@ void AddControls(HWND hWnd)
 	SendMessageW(hLogo, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hLogoImage);
 
 	CreateWindowW(L"Button", L"Open File", WS_VISIBLE | WS_CHILD, 450, 10, 150, 36, hWnd, (HMENU)OPEN_FILE_BUTTON, NULL, NULL);
-	hEdit = CreateWindowW(L"Edit", L"", WS_VISIBLE | WS_CHILD | ES_MULTILINE | WS_BORDER | ES_AUTOVSCROLL, 450, 50, 400, 300, hWnd, NULL, NULL, NULL);
+	CreateWindowW(L"Button", L"Save File", WS_VISIBLE | WS_CHILD, 600, 10, 150, 36, hWnd, (HMENU)SAVE_FILE_BUTTON, NULL, NULL);
+
+	hEdit = CreateWindowW(L"Edit", L"", WS_VISIBLE | WS_CHILD | ES_MULTILINE | WS_BORDER | WS_VSCROLL | WS_HSCROLL,
+		450, 50, 400, 300, hWnd, NULL, NULL, NULL);
 }
 
 void LoadImages()
