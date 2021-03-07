@@ -1,4 +1,4 @@
-#include <windows.h>
+﻿#include <windows.h>
 #include <tchar.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -132,6 +132,16 @@ void SaveFile(HWND hWnd)
 
 	//MessageBox(NULL, ofn.lpstrFile, "", MB_OK);
 }
+
+// WM_CHAR : Khi nhập 1 kí tự từ bàn phím
+// WM_COMMAND:Khi lựa chọn các item trong popup menu
+// WM_CREATE : Khi windows được tạo
+// WM_DESTROY : Khi windows bị destroy
+// WM_LBUTTONDOWN : Khi click chuột trái
+// WM_RBUTTONDOWN : Khi click chuột phải
+// WM_MOUSEMOVE : Khi di chuyển con trỏ chuột
+// WM_PAINT : Khi windows được vẽ lại
+// WM_QUIT : Khi close windows
 
 
 LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
