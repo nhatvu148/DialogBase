@@ -12,9 +12,11 @@ LRESULT CALLBACK WindowProcedure(HWND, UINT, WPARAM, LPARAM);
 
 void AddMenus(HWND);
 void AddControls(HWND);
+void LoadImages();
 
 HMENU hMenu;
-HWND hName, hAge, hOut;
+HWND hName, hAge, hOut, hLogo;
+HBITMAP hLogoImage, hGenerateImage;
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 {
@@ -45,8 +47,21 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 {
+	PAINTSTRUCT ps;
+	HDC hdc;
+	TCHAR greeting[] = _T("Hello, World!");
+
 	switch (msg)
 	{
+	case WM_PAINT:
+		hdc = BeginPaint(hWnd, &ps);
+
+		TextOut(hdc,
+			5, 5,
+			greeting, _tcslen(greeting));
+
+		EndPaint(hWnd, &ps);
+		break;
 	case WM_COMMAND:
 		switch (wp)
 		{
@@ -73,6 +88,7 @@ LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		}
 		break;
 	case WM_CREATE:
+		LoadImages();
 		AddMenus(hWnd);
 		AddControls(hWnd);
 		break;
@@ -115,4 +131,11 @@ void AddControls(HWND hWnd)
 	CreateWindowW(L"Button", L"Generate", WS_VISIBLE | WS_CHILD, 150, 140, 98, 38, hWnd, (HMENU)GENERATE_BUTTON, NULL, NULL);
 
 	hOut = CreateWindowW(L"Edit", L"", WS_VISIBLE | WS_CHILD | WS_BORDER, 100, 200, 300, 200, hWnd, NULL, NULL, NULL);
+	hLogo = CreateWindowW(L"Static", NULL, WS_VISIBLE | WS_CHILD | SS_BITMAP, 350, 60, 100, 100, hWnd, NULL, NULL, NULL);
+	SendMessageW(hLogo, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hLogoImage);
+}
+
+void LoadImages()
+{
+	hLogoImage = (HBITMAP)LoadImageW(NULL, L"C:\\Users\\nhatv\\Work\\DialogBase\\Win32Test\\Logo.bmp", IMAGE_BITMAP, 100, 100, LR_LOADFROMFILE);
 }
