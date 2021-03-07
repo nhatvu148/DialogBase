@@ -92,6 +92,21 @@ LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			GetWindowText(hName, name, 30);
 			GetWindowText(hAge, age, 10);
 
+			if (strcmp(name, "") == 0 || strcmp(age, "") == 0)
+			{
+				val = MessageBoxW(hWnd, L"You did not enter anything!", NULL, MB_ICONERROR | MB_ICONEXCLAMATION | MB_ABORTRETRYIGNORE);
+				switch (val)
+				{
+				case IDABORT:
+					DestroyWindow(hWnd);
+					break;
+				case IDRETRY:
+					return 0;
+				case IDIGNORE:
+					break;
+				}
+			}
+
 			strcpy(out, name);
 			strcat(out, " is ");
 			strcat(out, age);
