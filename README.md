@@ -1,1 +1,1 @@
-# A repository to learn C++ GUI Programming.
+# A repository to learn System and GUI Programming in C++.
