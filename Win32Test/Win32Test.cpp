@@ -34,6 +34,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	CreateWindowW(L"myWindowClass", L"My Window", WS_OVERLAPPEDWINDOW | WS_VISIBLE, 100, 100, 500, 500, NULL, NULL, NULL, NULL);
 
+	MessageBoxW(NULL, L"Hello World", L"My GUI", MB_OK);
+
 	MSG msg = { 0 };
 	while (GetMessage(&msg, NULL, NULL, NULL))
 	{
@@ -50,6 +52,7 @@ LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 	PAINTSTRUCT ps;
 	HDC hdc;
 	TCHAR greeting[] = _T("Hello, World!");
+	int val;
 
 	switch (msg)
 	{
@@ -66,7 +69,20 @@ LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 		switch (wp)
 		{
 		case FILE_MENU_EXIT:
-			DestroyWindow(hWnd);
+			// MB_ABORTRETRYIGNORE, MB_CANCELTRYCONTINUE, MB_HELP
+			// MB_OK, MB_OKCANCEL, MB_RETRYCANCEL, MB_YESNO, MB_YESNOCANCEL
+			// MB_ICONEXCLAMATION, MB_ICONWARNING, MB_ICONINFORMATION, MB_ICONASTERISK
+			// MB_ICONQUESTION, MB_ICONSTOP, MB_ICONERROR, MB_ICONHAND
+			// IDABORT 3, IDCANCEL 2, IDCONTINUE 11, IDIGNORE 5, IDNO 7, IDOK 1, IDRETRY 4, IDTRYAGAIN 10, IDYES 6
+			val = MessageBoxW(hWnd, L"Are you sure?", L"Wait!", MB_YESNO | MB_ICONEXCLAMATION);
+			if (val == IDYES)
+			{
+				DestroyWindow(hWnd);
+			}
+			else if (val == IDNO)
+			{
+
+			}
 			break;
 		case FILE_MENU_NEW:
 			MessageBeep(MB_ICONINFORMATION);
