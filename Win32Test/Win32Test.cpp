@@ -9,6 +9,9 @@
 #define GENERATE_BUTTON 4
 #define OPEN_FILE_BUTTON 5
 #define SAVE_FILE_BUTTON 6
+#define IDM_FILE_NEW 7
+#define IDM_FILE_OPEN 8
+#define IDM_FILE_QUIT 9
 
 #pragma warning(disable : 4996)
 
@@ -150,6 +153,7 @@ LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 	HDC hdc;
 	TCHAR greeting[] = _T("Hello, World!");
 	int val;
+	POINT point;
 
 	switch (msg)
 	{
@@ -165,6 +169,13 @@ LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 	case WM_COMMAND:
 		switch (wp)
 		{
+		case IDM_FILE_NEW:
+		case IDM_FILE_OPEN:
+			MessageBeep(MB_ICONINFORMATION);
+			break;
+		case IDM_FILE_QUIT:
+			SendMessage(hWnd, WM_CLOSE, 0, 0);
+			break;
 		case OPEN_FILE_BUTTON:
 			OpenFile(hWnd);
 			break;
@@ -221,6 +232,20 @@ LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 			break;
 
 		}
+		break;
+	case WM_RBUTTONUP:
+		point.x = LOWORD(lp);
+		point.y = HIWORD(lp);
+		hMenu = CreatePopupMenu();
+		ClientToScreen(hWnd, &point);
+
+		AppendMenu(hMenu, MF_STRING, IDM_FILE_NEW, TEXT("&New"));
+		AppendMenu(hMenu, MF_STRING, IDM_FILE_OPEN, TEXT("&Open"));
+		AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+		AppendMenu(hMenu, MF_STRING, IDM_FILE_QUIT, TEXT("&Quit"));
+
+		TrackPopupMenu(hMenu, TPM_RIGHTBUTTON, point.x, point.y, 0, hWnd, NULL);
+		DestroyMenu(hMenu);
 		break;
 	case WM_CREATE:
 		LoadImages();
