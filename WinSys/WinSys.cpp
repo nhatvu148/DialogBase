@@ -3,13 +3,27 @@
 
 void CreateDirectory();
 void CopyFile();
+void MoveFile();
 
 int main()
 {
-	CopyFile();
+	MoveFile();
 
 	system("PAUSE");
 	return 0;
+}
+
+void MoveFile()
+{
+	BOOL bFile;
+	bFile = MoveFile(L"C:\\Users\\nhatv\\Work\\DialogBase\\WinSys\\OldFile.txt",
+		L"C:\\Users\\nhatv\\Work\\DialogBase\\WinSys\\New.txt"
+	);
+	if (bFile == FALSE)
+	{
+		std::cout << "MoveFile Failed and Error No - " << GetLastError() << std::endl;
+	}
+	std::cout << "MoveFile Succeeded" << std::endl;
 }
 
 void CopyFile()
