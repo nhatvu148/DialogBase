@@ -7,5 +7,6 @@
 
 # Precompiled headers:
 
-- #include "stdafx.h"
+- stdafx.h
+- pch.h
 - Simply list all your big huge headers for your APIs in your stdafx.h file, in the appropriate order, and then start each of your CPP files at the very top with an #include "stdafx.h", before any meaningful content.
