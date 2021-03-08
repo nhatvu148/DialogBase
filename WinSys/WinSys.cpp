@@ -17,6 +17,10 @@ int main()
 void CreateFile()
 {
 	HANDLE hFile;
+	BOOL bFile;
+	char chBuffer[] = "This is a sample text";
+	DWORD dwNoByteToWrite = strlen(chBuffer);
+	DWORD dwNoByteWritten = 0;
 
 	hFile = CreateFile(
 		L"C:\\Users\\nhatv\\Work\\DialogBase\\WinSys\\TestFile.txt",
@@ -32,6 +36,18 @@ void CreateFile()
 		std::cout << "CreateFile Failed and Error No - " << GetLastError() << std::endl;
 	}
 	std::cout << "CreateFile Succeeded" << std::endl;
+
+	bFile = WriteFile(
+		hFile,
+		chBuffer,
+		dwNoByteToWrite,
+		&dwNoByteWritten,
+		NULL);
+	if (bFile == FALSE)
+	{
+		std::cout << "WriteFile Failed and Error No - " << GetLastError() << std::endl;
+	}
+	std::cout << "WriteFile Succeeded" << std::endl;
 
 	CloseHandle(hFile);
 }
