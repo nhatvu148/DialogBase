@@ -4,13 +4,36 @@
 void CreateDirectory();
 void CopyFile();
 void MoveFile();
+void CreateFile();
 
 int main()
 {
-	MoveFile();
+	CreateFile();
 
 	system("PAUSE");
 	return 0;
+}
+
+void CreateFile()
+{
+	HANDLE hFile;
+
+	hFile = CreateFile(
+		L"C:\\Users\\nhatv\\Work\\DialogBase\\WinSys\\TestFile.txt",
+		GENERIC_READ | GENERIC_WRITE,
+		FILE_SHARE_READ,
+		NULL,
+		CREATE_NEW,
+		FILE_ATTRIBUTE_NORMAL,
+		NULL
+	);
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+		std::cout << "CreateFile Failed and Error No - " << GetLastError() << std::endl;
+	}
+	std::cout << "CreateFile Succeeded" << std::endl;
+
+	CloseHandle(hFile);
 }
 
 void MoveFile()
