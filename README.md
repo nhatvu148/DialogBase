@@ -15,3 +15,9 @@
 
 - "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"
 - msbuild myproject.vcxproj /p:configuration=debug /p:platform=win32
+
+# WXWIDGETS:
+
+- https://www.wxwidgets.org/docs/tutorials/
+- https://www.wxwidgets.org/downloads/
+- https://www.youtube.com/watch?v=sRhoZcNpMb4
